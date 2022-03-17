@@ -20,7 +20,7 @@ app = Flask(__name__)
 @app.route("/buyers")
 def get_all_buyer():
     result  = []
-    buyer_doc = db.collection('persons').stream()
+    buyer_doc = db.collection('buyers').stream()
     for buyer in buyer_doc:
         result.append(buyer.to_dict())
     
@@ -43,19 +43,29 @@ def get_all_buyer():
 # add buyer
 @app.route("/add/<string:buyerName>/<string:buyerID>", methods=["POST", "GET"])
 def add_buyer(buyerName, buyerID):
+    allBuyers = db.collection('buyers').get()
+    for buyer in allBuyers:
+        buyer = buyer.to_dict()
+        if buyer['id'] == buyerID:
+            return jsonify(
+                {
+                    "code":  404,
+                    "message": "buyer already exists"
+                }
+            )
     try:
-        db.collection('persons').add({'name':buyerName,'age':buyerID})
+        db.collection('buyers').add({'name':buyerName,'id':buyerID})
         return jsonify(
             {
-                'code': 200,
-                "message": "congratz"
+                "code": 200,
+                "message": "congratz buyer addeded"
             }
         )
     except:
         return jsonify(
             {
                 "code": 404,
-                "message": "noob"
+                "message": "error while adding buyer :/"
             }
         )
 
