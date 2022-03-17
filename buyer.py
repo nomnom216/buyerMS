@@ -19,11 +19,26 @@ app = Flask(__name__)
 
 @app.route("/buyers")
 def get_all_buyer():
-    string = ""
+    result  = []
     buyer_doc = db.collection('persons').stream()
-    for doc in buyer_doc:
-        string += str(doc.to_dict())
-    return jsonify(string)
+    for buyer in buyer_doc:
+        result.append(buyer.to_dict())
+    
+    if len(result) == 0:
+        return jsonify(
+            {
+                "code": 401,
+                "message": "buyer db is empty"
+            }
+        )
+    return jsonify(
+        {
+            "code": 200,
+            "data": {
+                "buyers": result
+            }
+        }
+    )
 
 
 @app.route("/add/<string:buyerName>/<string:buyerID>", methods=["POST", "GET"])

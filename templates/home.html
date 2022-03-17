@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    
+    </script>
+        <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css'
+        rel='stylesheet'
+        integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC'
+        crossorigin='anonymous'>
+</head>
+
+
+<body>
+    <h1>Add a new buyer</h1>
+
+    <form id="buyerForm">
+        Buyer Name: <input type="text" name="buyerName" id="buyerName">
+        <br>
+        <br>
+        Buyer ID: <input type="text" name="id" id="id">
+        <br>
+        <br>
+        <input type="submit" id="processInput">
+    </form>
+
+
+    <script>
+        function showError(message) {
+            console.log(message)
+        }
+
+        $("buyerForm").submit(async(event) => {
+            event.preventDefault();
+
+            var serviceURL = "http://127.0.0.1:5000/addbuyer/";
+            //get form data
+            var buyerName = $('#buyerName').val()
+            var buyerID = $("#id").val()
+            serviceUrl += buyerID;
+
+            try {
+                const response 
+                = await fetch (
+                    serviceURL, {
+                        method: 'POST',
+                        headers: {"content-Type" : "application/json" },
+                        body: JSON.stringify({ name: buyerName, id: buyerID})
+                    }
+                );
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log(response)
+                }
+                else {
+                    console.log(data)
+                    showError("error!")
+                }
+            }
+            catch (error) {
+                showError('There is a problem adding this buyer, please try again later. <br />');
+            }
+        })
+        
+    </script>
+</body>
+</html>
