@@ -40,7 +40,7 @@ def get_all_buyer():
         }
     )
 
-
+# add buyer
 @app.route("/add/<string:buyerName>/<string:buyerID>", methods=["POST", "GET"])
 def add_buyer(buyerName, buyerID):
     try:
