@@ -19,7 +19,7 @@ cred = credentials.Certificate(
     }   
 )
 
-# cred = credentials.Certificate("serviceAccountKey.json")
+
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
