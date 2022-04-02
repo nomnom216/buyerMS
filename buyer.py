@@ -80,7 +80,7 @@ def add_buyer():
         )
 
 #UPDATE BUYER INFO
-@app.route("/buyer/update/<string:buyerEmail>", methods=["POST", "GET"])
+@app.route("/buyer/update/<string:buyerEmail>", methods=["POST", "GET", "PUT"])
 def update_buyer(buyerEmail):
     buyerRef = db.collection('buyers').document(buyerEmail)
     print(buyerRef)
