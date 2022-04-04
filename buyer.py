@@ -86,6 +86,15 @@ def add_buyer():
             }
         )
 
+#GET BUYER INFO BY ID
+@app.route("/getBuyerById/<string:buyerID>", methods=["GET","POST"]) 
+@cross_origin()
+def getSellerById(buyerID):
+    # sellerData = request.get_json()
+    sellerDetail = db.collection('buyers').document(buyerID).get()
+    return sellerDetail.to_dict()
+
+
 #UPDATE BUYER INFO
 @app.route("/updateBuyer/<string:buyerID>", methods=["POST", "GET", "PUT"])
 @cross_origin()
