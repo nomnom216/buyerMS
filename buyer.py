@@ -30,7 +30,7 @@ app = Flask(__name__)
 CORS(app)
 
 #GET ALL BUYER
-@app.route("/buyers")
+@app.route("/getAllBuyers")
 @cross_origin()
 def get_all_buyer():
     result  = []
@@ -55,7 +55,7 @@ def get_all_buyer():
     )
 
 # ADD NEW BUYER
-@app.route("/buyers/add", methods=["POST", "GET"])
+@app.route("/addNewBuyer", methods=["POST", "GET"])
 @cross_origin()
 def add_buyer():
     allBuyers = db.collection('buyers').get()
@@ -87,26 +87,26 @@ def add_buyer():
         )
 
 #UPDATE BUYER INFO
-@app.route("/buyer/update/<string:buyerEmail>", methods=["POST", "GET", "PUT"])
+@app.route("/updateBuyer/<string:buyerID>", methods=["POST", "GET", "PUT"])
 @cross_origin()
-def update_buyer(buyerEmail):
-    buyerRef = db.collection('buyers').document(buyerEmail)
+def update_buyer(buyerID):
+    buyerRef = db.collection('buyers').document(buyerID)
     print(buyerRef)
     buyerInfo = request.get_json()
     print(buyerInfo)
-    if buyerInfo["email"] != buyerEmail:
+    if buyerInfo['buyerInfo']["uid"] != buyerID:
         try: #CREATE NEW
-            db.collection("buyers").document(buyerInfo["uid"]).set(buyerInfo)
+            db.collection("buyers").document(buyerInfo['buyerInfo']["uid"]).set(buyerInfo['buyerInfo'])
              
              #DELETE OLD
-            db.collection('buyers').document(buyerEmail).delete()
+            db.collection('buyers').document(buyerID).delete()
         except:
             return jsonify({"code": 500, "message": "Error occured when updating buyer"})
         
         return jsonify({"code": 200, "message": "Successfully Updated Email Address and Information"})
     else:
         try:
-            buyerRef.update(buyerInfo)
+            buyerRef.update(buyerInfo['buyerInfo'])
 
         except:
             return jsonify({"code": 500, "message": "Error occured when updating buyer info"})
