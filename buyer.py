@@ -41,7 +41,7 @@ def get_all_buyer():
     if len(result) == 0:
         return jsonify(
             {
-                "code": 401,
+                "code": 404,
                 "message": "Buyer database is empty"
             }
         )
@@ -66,7 +66,7 @@ def add_buyer():
         if buyer['uid'] == buyerInfo['buyerInfo']["uid"]:
             return jsonify(
                 {
-                    "code":  404,
+                    "code":  400,
                     "message": "buyer already exists"
                 }
             )
@@ -74,14 +74,14 @@ def add_buyer():
         db.collection('buyers').document(buyerInfo['buyerInfo']['uid']).set(buyerInfo['buyerInfo'])
         return jsonify(
             {
-                "code": 200,
+                "code": 201,
                 "message": "Successfully added buyer"
             }
         )
     except:
         return jsonify(
             {
-                "code": 404,
+                "code": 500,
                 "message": "Error occured when adding buyer"
             }
         )
@@ -101,17 +101,17 @@ def update_buyer(buyerEmail):
              #DELETE OLD
             db.collection('buyers').document(buyerEmail).delete()
         except:
-            return jsonify({"code": 404, "message": "Error occured when updating buyer"})
+            return jsonify({"code": 500, "message": "Error occured when updating buyer"})
         
-        return jsonify({"code": 201, "message": "Successfully Updated Email Address and Information"})
+        return jsonify({"code": 200, "message": "Successfully Updated Email Address and Information"})
     else:
         try:
             buyerRef.update(buyerInfo)
 
         except:
-            return jsonify({"code": 404, "message": "Error occured when updating buyer info"})
+            return jsonify({"code": 500, "message": "Error occured when updating buyer info"})
             
-        return jsonify({"code": 201, "message": "Successfully Updated Information"})
+        return jsonify({"code": 200, "message": "Successfully Updated Information"})
         
 
 if __name__ == "__main__":
