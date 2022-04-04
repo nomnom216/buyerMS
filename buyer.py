@@ -1,8 +1,10 @@
+from audioop import cross
 from flask import Flask, request, jsonify, render_template
 
 import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
+from flask_cors import CORS, cross_origin 
 
 cred = credentials.Certificate(
     {
@@ -25,9 +27,11 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 app = Flask(__name__)
+CORS(app)
 
 #GET ALL BUYER
 @app.route("/buyers")
+@cross_origin()
 def get_all_buyer():
     result  = []
     buyer_doc = db.collection('buyers').stream()
@@ -52,12 +56,14 @@ def get_all_buyer():
 
 # ADD NEW BUYER
 @app.route("/buyers/add", methods=["POST", "GET"])
+@cross_origin()
 def add_buyer():
     allBuyers = db.collection('buyers').get()
     buyerInfo = request.get_json()
+    # return buyerInfo
     for buyer in allBuyers:
         buyer = buyer.to_dict()
-        if buyer['email'] == buyerInfo["email"]:
+        if buyer['uid'] == buyerInfo['buyerInfo']["uid"]:
             return jsonify(
                 {
                     "code":  404,
@@ -65,7 +71,7 @@ def add_buyer():
                 }
             )
     try:
-        db.collection('buyers').document(buyerInfo['email']).set(buyerInfo)
+        db.collection('buyers').document(buyerInfo['buyerInfo']['uid']).set(buyerInfo['buyerInfo'])
         return jsonify(
             {
                 "code": 200,
@@ -82,6 +88,7 @@ def add_buyer():
 
 #UPDATE BUYER INFO
 @app.route("/buyer/update/<string:buyerEmail>", methods=["POST", "GET", "PUT"])
+@cross_origin()
 def update_buyer(buyerEmail):
     buyerRef = db.collection('buyers').document(buyerEmail)
     print(buyerRef)
@@ -89,7 +96,7 @@ def update_buyer(buyerEmail):
     print(buyerInfo)
     if buyerInfo["email"] != buyerEmail:
         try: #CREATE NEW
-            db.collection("buyers").document(buyerInfo["email"]).set(buyerInfo)
+            db.collection("buyers").document(buyerInfo["uid"]).set(buyerInfo)
              
              #DELETE OLD
             db.collection('buyers').document(buyerEmail).delete()
